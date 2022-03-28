@@ -27,22 +27,11 @@ function App() {
         />
         
         </div>
-        <h2>hello from the other side</h2>
-        <div>
-            {posts1.map((post) => {
-              return <div>
-                {post.userName} {post.caption}
-                <img
-                  src={post.imageURL}
-                />
-              </div>
-            })
-            }
-          </div> 
+        <h2>hello from the other side</h2> 
         {
           posts1.map(postss => (
-            <Post userName={postss.userName1} caption={postss.caption1}
-            imageURL={postss.imageURL1} 
+            <Post userName={postss.userName} caption={postss.caption}
+            imageURL={postss.imageURL} 
             />
           ))
         }
