@@ -6,6 +6,7 @@ import { collection, getDocs } from 'firebase/firestore';
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import { Button, Input } from '@material-ui/core';
+import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
 
 // ----- modal
 function getModalStyle() {
@@ -45,7 +46,7 @@ function App() {
 
   //auth changes/updates
   useEffect(() => {
-    auth.onAuthStateChanged((authuser) => {
+    const unsubscribe = auth.onAuthStateChanged((authuser) => {
       if (authuser){
         //user has signed in
         console.log(authuser);
@@ -65,6 +66,12 @@ function App() {
         setUser(null);
       }
     })
+
+    return () => {
+      //cleanup actions
+      unsubscribe();
+    }
+
   }, [user, userName]);
 
   //listening to any database changes
@@ -80,10 +87,20 @@ function App() {
   //sign up function
   const signUp = (event) => {
     event.preventDefault();
-
-    auth
-    .createUserWithEmailAndPassword(email, password)
-    .catch((error) => alert(error.message));
+    const auth = getAuth();
+    createUserWithEmailAndPassword(auth, email, password)
+      .then ((authuser) => {
+        return authuser.user.updateProfile({
+          displayName: userName
+        })
+      })
+      .catch((error) => 
+        alert(error.message));
+        setOpen(false);
+      
+    // auth -- error for firebase 9
+    // .createUserWithEmailAndPassword(email, password)
+    // .catch((error) => alert(error.message));
   }
 
   return (
