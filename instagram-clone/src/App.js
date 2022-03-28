@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import './App.css';
 import Post from './Post';
-import { db } from './firebase';
+import { db, auth } from './firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
@@ -38,11 +38,36 @@ function App() {
   const [modalStyle] = useState(getModalStyle);
   const classes = useStyles();
   const [open, setOpen] = useState(false);
-  const [username, setUsername] = useState('');
+  const [userName, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
+  const [user, setUser] = useState(null);
 
+  //auth changes/updates
+  useEffect(() => {
+    auth.onAuthStateChanged((authuser) => {
+      if (authuser){
+        //user has signed in
+        console.log(authuser);
+        setUser(authuser);
 
+        if (authuser.displayName){
+          // don't update username
+        } else {
+          //if we just created someone...
+          return authuser.updateProfile({
+            displayName: userName,
+          });
+          
+        }
+      }else{
+        //user has signed out
+        setUser(null);
+      }
+    })
+  }, [user, userName]);
+
+  //listening to any database changes
   useEffect(() => {
     const getPosts = async () => {
       const data = await getDocs(collection(db, "posts"));
@@ -54,7 +79,11 @@ function App() {
 
   //sign up function
   const signUp = (event) => {
+    event.preventDefault();
 
+    auth
+    .createUserWithEmailAndPassword(email, password)
+    .catch((error) => alert(error.message));
   }
 
   return (
@@ -65,11 +94,19 @@ function App() {
         onClose={() => setOpen(false)}
       >
        <div style={modalStyle} className={classes.paper}>
+       <form className="app__signup">
        <center>
+       <img
+          className="app__headerImage"
+          src="https://www.instagram.com/static/images/web/mobile_nav_type_logo.png/735145cfe0a4.png"
+          alt=""
+        
+          />
+        </center>
        <Input
           placeholder='username'
           type='text'
-          value={username}
+          value={userName}
           onChange={(e) => setUsername(e.target.value)}
           />
         <Input
@@ -85,7 +122,7 @@ function App() {
         onChange={(e) => setPassword(e.target.value)}
         />
         <Button type='submit' onClick={signUp}>Sign Up</Button>
-       </center>
+        </form>
       </div>
       </Modal>
 
