@@ -1,12 +1,12 @@
 import React, {useState, useEffect} from 'react';
 import './App.css';
 import Post from './Post';
-import { db, auth } from './firebase';
+import { db, auth} from './firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import { Button, Input } from '@material-ui/core';
-import { createUserWithEmailAndPassword, getAuth, updateProfile } from 'firebase/auth';
+import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
 // ----- modal
 function getModalStyle() {
@@ -43,6 +43,7 @@ function App() {
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
   const [user, setUser] = useState(null);
+  const [openSignIn, setOpenSignIn] = useState(false);
 
   //auth changes/updates
   useEffect(() => {
@@ -94,6 +95,18 @@ function App() {
   }
 
   //sign in
+  const signIn = (event) => {
+    event.preventDefault();
+    const auth = getAuth();
+signInWithEmailAndPassword(auth, email, password)
+  .then((userCredential) => {
+    // Signed in 
+    const user = userCredential.user;
+    // ...
+  })
+  .catch((error) => alert(error.message));
+  setOpenSignIn(false);
+  }  
 
   return (
     <div className="App">
