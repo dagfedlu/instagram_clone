@@ -7,6 +7,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import { Button, Input } from '@material-ui/core';
 import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import ImageUpload from './imageUpload';
 
 // ----- modal
 function getModalStyle() {
@@ -110,6 +111,7 @@ signInWithEmailAndPassword(auth, email, password)
 
   return (
     <div className="App">
+      <ImageUpload/>
       {/* for sign up */}
       <Modal
         open={open}
