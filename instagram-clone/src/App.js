@@ -98,7 +98,6 @@ function App() {
   //sign in
   const signIn = (event) => {
     event.preventDefault();
-    const auth = getAuth();
 signInWithEmailAndPassword(auth, email, password)
   .then((userCredential) => {
     // Signed in 
@@ -111,7 +110,14 @@ signInWithEmailAndPassword(auth, email, password)
 
   return (
     <div className="App">
-      <ImageUpload/>
+      {user?.email ? (
+          <ImageUpload username={user.email} />
+          ):
+            (
+              <h3>u need to log in sad emoji</h3>
+            )
+          }
+      
       {/* for sign up */}
       <Modal
         open={open}

@@ -7,7 +7,7 @@ import { collection, addDoc } from "firebase/firestore";
 import { FirebaseError } from 'firebase/app';
 import firebase from 'firebase/compat/app';
 
-function ImageUpload() {
+function ImageUpload({username}) {
 
     const [caption, setCaption] = useState('');
     const [image, setImage] = useState(null);
@@ -44,6 +44,9 @@ function ImageUpload() {
                             userName: username  
                           });
                     }
+                    setProgress(0);
+                    setCaption("");
+                    setImage(null);
                     postImage();
                 })
             }
